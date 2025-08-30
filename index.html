@@ -1,0 +1,269 @@
+        <section id="show-comments" class="contact fade-in" style="margin-top: 60px; display:none;">
+            <h2 class="section-title">SHOW COMMENTS</h2>
+            <div id="all-comments-list" style="margin-top:2rem;"></div>
+        </section>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My Portofolio</title>
+        <meta name="description" content="A unique brutalist portfolio template for professionals.">
+        <!-- Favicon -->
+        <link rel="icon" href="/placeholder.svg?height=32&width=32" type="image/svg+xml">
+        <!-- Font Awesome for Icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet" href="style.css">
+    </head>
+
+            <body>
+            <!-- ADMIN PAGE -->
+            <div id="admin-page" style="display:none;min-height:100vh;background:linear-gradient(135deg,#FDF0D5 0%,#FEC89A 100%);position:fixed;z-index:99999;top:0;left:0;width:100vw;height:100vh;overflow:auto;">
+                <section class="text-center" style="max-width:800px;margin:2rem auto 0 auto;">
+                    <div class="card mb-3" style="box-shadow:0 8px 32px rgba(0,0,0,0.08);border-radius:1rem;overflow:hidden;">
+                        <div class="card-body py-5 px-md-5">
+                            <h2 style="margin-bottom:2rem;">Admin Panel</h2>
+                            <button id="logout-admin" class="submit-button" style="margin-bottom:2rem;">Logout</button>
+                            <h3 style="margin-bottom:1.5rem;">All Comments</h3>
+                            <div id="admin-comments-list" style="margin-top:1.5rem;"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+                    <div id="login-page" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#FDF0D5 0%,#FEC89A 100%);position:fixed;z-index:99999;top:0;left:0;width:100vw;height:100vh;">
+                        <section class="login-section" style="width:100%;max-width:700px;">
+                            <div class="login-card" style="background:#fff;border-radius:1.2rem;box-shadow:0 8px 32px rgba(0,0,0,0.10);padding:2.5rem 2rem 2rem 2rem;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:2.5rem;">
+                                  <img src="Image/login.png" alt="Login Image" style="max-width:100%;height:auto;border-radius:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);display:block;">
+                                <div style="flex:1;min-width:240px;max-width:340px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                                    <h2 style="margin-bottom:1.2rem;font-size:2rem;letter-spacing:1px;text-align:center;">Login</h2>
+                                    <div style="text-align:center;margin-bottom:1.2em;color:#888;font-size:1.05em;">
+                                        No admin account? Please login as a visitor.
+                                    </div>
+                                    <form id="login-form" style="width:100%;max-width:320px;margin:0 auto;">
+                                        <div class="form-outline mb-3" style="margin-bottom:1.2rem;">
+                                            <input type="email" id="login-email" class="form-input" placeholder="Email address" required style="width:100%;padding:0.8em 1em;border-radius:7px;border:1.5px solid #e0e0e0;font-size:1.08em;" />
+                                        </div>
+                                        <div class="form-outline mb-3" style="margin-bottom:1.2rem;">
+                                            <input type="password" id="login-password" class="form-input" placeholder="Password" required style="width:100%;padding:0.8em 1em;border-radius:7px;border:1.5px solid #e0e0e0;font-size:1.08em;" />
+                                        </div>
+                                                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;gap:0.5em;">
+                                                            <div style="display:flex;align-items:center;">
+                                                                <input class="form-check-input" type="checkbox" id="login-remember" checked style="margin-right:0.5em;vertical-align:middle;" />
+                                                                <label for="login-remember" style="font-size:0.98em;color:#888;cursor:pointer;">Remember me</label>
+                                                            </div>
+                                                            <a href="#" style="font-size:0.95em;color:#b8860b;text-decoration:none;white-space:nowrap;">Forgot password?</a>
+                                                        </div>
+                                        <button type="submit" class="submit-button" style="width:100%;margin-bottom:0.7em;">Sign in</button>
+                                        <button type="button" id="visitor-login-btn" class="submit-button" style="width:100%;background:#888;margin-bottom:0.7em;">Login as Visitor</button>
+                                        <div id="login-error" style="color:#dc3545;margin-top:0.5em;display:none;text-align:center;"></div>
+                                    </form>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+        <!-- Loading Screen -->
+        <div id="loading-screen">
+            <div class="loading-spinner"></div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <nav class="navbar" id="navbar">
+            <div class="nav-container">
+                <a href="#hero" class="nav-logo"> Portofolio</a>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="#hero" class="nav-link"><i class="fas fa-home"></i> HOME</a></li>
+                    <li><a href="#about" class="nav-link"><i class="fas fa-user"></i> ABOUT</a></li>
+                    <li><a href="#portfolio" class="nav-link"><i class="fas fa-briefcase"></i> PORTFOLIO</a></li>
+                    <li><a href="#skills" class="nav-link"><i class="fas fa-code"></i> SKILLS</a></li>
+                    <li><a href="#contact" class="nav-link"><i class="fas fa-envelope"></i> CONTACT</a></li>
+                </ul>
+                <button id="logout-btn" style="display:none;background:none;border:none;outline:none;cursor:pointer;font-size:1.15em;color:#b8860b;align-items:center;gap:0.5em;">
+                  <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+                <div class="hamburger" id="hamburger" aria-label="Open navigation menu" tabindex="0">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+
+
+        <main>
+            <!-- Hero Section -->
+            <section id="hero" class="hero fade-in">
+                <div class="hero-container">
+                    <h1 class="hero-title">Welcome</h1>
+                    <p class="hero-subtitle">Hello visitors</p>
+                    <p class="hero-description">
+                       Halo, saya Aqso. Saat ini saya belajar dan berfokus pada pemrograman web. Beberapa project yang saya kerjakan adalah latihan dasar web, serta rencana membuat website penerimaan siswa PKL untuk DUDI. Portofolio ini saya buat sebagai langkah awal untuk mengasah skill dan membagikan karya saya.
+                    </p>
+                </div>
+            </section>
+
+            <!-- About Section -->
+            <section id="about" class="about fade-in">
+                <div class="about-content">
+                    <div class="about-image">
+                        <img src="Image/aku pplg.png" alt="Your Profile Picture" class="profile-image">
+                    </div>
+                    <div class="about-text">
+                        <h2>ABOUT ME</h2>
+                        <p class="about-description" style="white-space:pre-line;">
+Nama: Muhammad Aqso Putera Anshari
+
+Kelas: XII PPLG 2
+
+Jurusan: Pengembangan Perangkat Lunak dan Gim (PPLG)
+
+Sekolah: SMKN 7 Samarinda
+
+PKL: Universitas Muhammadiyah Kalimantan Timur (UMKT) Samarinda
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Portfolio Section -->
+                    <section id="portfolio" class="portfolio fade-in" style="margin-top: 80px;">
+                        <h2 class="section-title">PORTFOLIO</h2>
+                <div class="portfolio-grid">
+                    <!-- Project Card 1 -->
+                    <div class="portfolio-item fade-in">
+                        <div class="portfolio-image">
+                                <img src="image/lingkungan smkn 7.jpg" alt="foto lingkungan SMKN 7" style="max-width:100%; border-radius:8px;">
+                        </div>
+                        <div class="portfolio-content" style="background:linear-gradient(90deg,#FDF0D5 0%,#FEC89A 100%);border-radius:16px;padding:1.5em 1.2em;margin-top:1em;box-shadow:0 2px 12px rgba(0,0,0,0.04);text-align:center;">
+                            <h3 class="portfolio-title" style="text-align:center;">🏫 My School</h3>
+                            <p class="portfolio-description" style="white-space:pre-line;text-align:left;">Saya bersekolah di SMKN 7 Samarinda. Di sekolah ini terdapat beberapa jurusan, yaitu:
+                                <p class="portfolio-description" style="white-space:pre-line; text-align:left;">Saya bersekolah di SMKN 7 Samarinda. Di sekolah ini terdapat beberapa jurusan, yaitu:
+
+PPLG (Pengembangan Perangkat Lunak dan Gim)
+mempelajari pembuatan aplikasi, website, dan pengembangan gim.
+
+DKV (Desain Komunikasi Visual)
+fokus pada desain grafis, ilustrasi, fotografi, dan media kreatif lainnya.
+
+TJKT (Teknik Jaringan Komputer dan Telekomunikasi)
+mempelajari jaringan komputer, server, dan sistem komunikasi.
+
+Animasi
+mendalami pembuatan animasi 2D, 3D, hingga motion graphic.
+
+Setiap jurusan memiliki keunggulan masing-masing dan membekali siswa dengan keterampilan siap kerja maupun untuk melanjutkan studi ke jenjang lebih tinggi.</p>
+                            <div style="flex:1 1 auto;"></div>
+                            <div style="display:flex;justify-content:center;">
+                                <a href="https://maps.app.goo.gl/oiYDHB5TsTxk9sVF6" target="_blank" class="portfolio-link" style="min-width:260px;max-width:100%;text-align:center;padding:0.9em 2.5em;font-size:1.13em;letter-spacing:0.5px;">Location <i class="fas fa-map-marker-alt"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Project Card 2 -->
+                    <div class="portfolio-item fade-in">
+                        <div class="portfolio-image">
+                            <img src="image/umkt.jpeg" alt="Project 2 Image" style="max-width:100%;height:auto;display:block;border-radius:8px;object-fit:cover;">
+                        </div>
+                    <div class="portfolio-content" style="background:linear-gradient(90deg,#FDF0D5 0%,#FEC89A 100%);border-radius:16px;padding:1.5em 1.2em;margin-top:1em;box-shadow:0 2px 12px rgba(0,0,0,0.04);text-align:center;">
+                                <h3 class="portfolio-title" style="text-align:center;">🛠️ PKL</h3>
+                                <p class="portfolio-description" style="text-align:left;max-width:700px;margin:0 auto 2em auto;white-space:pre-line;">
+    Saya melaksanakan Praktik Kerja Lapangan (PKL) di Universitas Muhammadiyah Kalimantan Timur (UMKT).
+    Di sana saya ditempatkan di Unit Teknologi Informasi (TI). Selama PKL, saya banyak belajar mengenai:
+
+    • Pengelolaan jaringan dan sistem informasi kampus
+    • Dukungan teknis untuk staf dan mahasiswa
+    • Pembuatan dokumentasi serta troubleshooting sederhana
+    • Pengenalan pada lingkungan kerja profesional di bidang IT
+
+    PKL ini memberikan banyak pengalaman baru, baik dalam hal keterampilan teknis maupun softskill seperti kerja sama tim, komunikasi, dan disiplin kerja.
+                                </p>
+                                <div style="flex:1 1 auto;"></div>
+                                <div style="display:flex;justify-content:center;">
+                                    <a href="https://maps.app.goo.gl/rdqstk5o8CugYaTi8" target="_blank" class="portfolio-link" style="min-width:260px;max-width:100%;text-align:center;padding:0.9em 2.5em;font-size:1.13em;letter-spacing:0.5px;">Location <i class="fas fa-map-marker-alt"></i></a>
+                                </div>
+                        </div>
+                    </div>
+                    <!-- Project Card 3 -->
+                    <div class="portfolio-item fade-in">
+                        <div class="portfolio-image">
+                            <img src="https://images.unsplash.com/photo-1703795459222-4b742bd742c3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fHdlYnNpdGV8ZW58MHwyfDB8fHww" alt="Project 3 Image">
+                        </div>
+                        <div class="portfolio-content" style="background:linear-gradient(90deg,#FDF0D5 0%,#FEC89A 100%);border-radius:16px;padding:1.5em 1.2em;margin-top:1em;box-shadow:0 2px 12px rgba(0,0,0,0.04);text-align:center;">
+                            <h3 class="portfolio-title" style="text-align:center;">💻 Project PKL</h3>
+                            <p class="portfolio-description" style="text-align:left;max-width:700px;margin:0 auto 2em auto;white-space:pre-line;">
+Sebagai bagian dari kegiatan PKL, saya juga mengerjakan Proyek PKL berupa pembuatan website penerimaan siswa PKL untuk DUDI (Dunia Usaha dan Dunia Industri).
+
+• Website ini memiliki beberapa fitur utama, antara lain:
+
+• Pendaftaran online siswa PKL
+• Upload dan verifikasi berkas persyaratan
+• Dashboard monitoring untuk sekolah, siswa, dan pihak DUDI
+• Notifikasi status penerimaan secara real-time
+
+Tujuan dari proyek ini adalah mempermudah proses penerimaan siswa PKL, mengurangi penggunaan kertas, serta membuat proses seleksi lebih transparan dan efisien.
+                            </p>
+                            <div style="flex:1 1 auto;"></div>
+                            <div style="flex:1 1 auto;"></div>
+                            <div style="display:flex;justify-content:center;">
+                                <a href="#" target="_blank" class="portfolio-link" style="min-width:260px;max-width:100%;text-align:center;padding:0.9em 2.5em;font-size:1.13em;letter-spacing:0.5px;">View Project <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Skills Section -->
+                            <section id="skills" class="skills fade-in" style="margin-top: 80px;">
+                                <h2 class="section-title">MY SKILLS</h2>
+                        <div class="skills-grid">
+                            <div class="skill-card fade-in"><span class="skill-title">JavaScript</span></div>
+                            <div class="skill-card fade-in"><span class="skill-title">HTML</span></div>
+                            <div class="skill-card fade-in"><span class="skill-title">PHP</span></div>
+                            <div class="skill-card fade-in"><span class="skill-title">CSS</span></div>
+                        </div>
+                        <div style="display:flex;justify-content:center;margin-top:2rem;">
+                            <p class="about-description" style="text-align:center;max-width:600px;">
+                                Saya lumayan menguasai JavaScript, HTML, CSS, dan PHP untuk membangun website sederhana, responsif, dan dinamis. Website Portofolio ini menggunakan JavaScript, HTML, dan CSS.
+                            </p>
+                        </div>
+                    </section>
+
+            <!-- Contact Section -->
+            <section id="contact" class="contact fade-in" style="margin-top: 140px;">
+                <h2 class="section-title">CONTACT</h2>
+                <div class="skills-grid">
+                    <div class="skill-card fade-in"><i class="fas fa-envelope"></i> aqsoanshari46@gmail.com</div>
+                    <a href="https://discord.com/users/722239129810763786" target="_blank" class="contact-btn fade-in" style="display:inline-flex;align-items:center;gap:0.5em;padding:0.7em 1.5em;background:linear-gradient(90deg,#7289da 0%,#99aab5 100%);color:#fff;border-radius:30px;font-weight:600;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin:0.3em 0;"><i class="fab fa-discord"></i> Discord</a>
+                    <a href="https://www.tiktok.com/@moonshal?_t=ZS-8yzhSrNllMe&_r=1" target="_blank" class="contact-btn fade-in" style="display:inline-flex;align-items:center;gap:0.5em;padding:0.7em 1.5em;background:linear-gradient(90deg,#000 0%,#ff0050 100%);color:#fff;border-radius:30px;font-weight:600;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin:0.3em 0;"><i class="fab fa-tiktok"></i> TikTok</a>
+                    <a href="https://www.instagram.com/moon_shal?igsh=MTdqeTRsZTBqemMwbg==" target="_blank" class="contact-btn fade-in" style="display:inline-flex;align-items:center;gap:0.5em;padding:0.7em 1.5em;background:linear-gradient(90deg,#fd5949 0%,#d6249f 50%,#285AEB 100%);color:#fff;border-radius:30px;font-weight:600;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin:0.3em 0;"><i class="fab fa-instagram"></i> Instagram</a>
+                </div>
+            </section>
+
+            <!-- Comment Section -->
+            <section id="comment" class="contact fade-in" style="margin-top: 60px;">
+                <h2 class="section-title">LEAVE A COMMENT</h2>
+                <form class="contact-form" id="comment-form">
+                    <div class="form-group">
+                        <label for="comment-name" class="form-label">Name</label>
+                        <input type="text" id="comment-name" name="name" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment-message" class="form-label">Comment</label>
+                        <textarea id="comment-message" name="comment" class="form-textarea" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-button">Send Comment</button>
+                </form>
+                <div id="comments-list" style="margin-top:2rem;"></div>
+            </section>
+        </main>
+
+
+        <!-- Footer -->
+        <footer class="footer" style="background:#000; color:#fff;">
+            <div class="footer-content" style="flex-direction:column;align-items:center;gap:1rem;text-align:center;">
+                <p class="footer-text" style="color:#fff;margin:0;">&copy; Portofolio</p>
+            </div>
+        </footer>
+
+            <script src="script.js"></script>
+    </body>
+</html>
