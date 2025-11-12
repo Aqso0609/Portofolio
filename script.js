@@ -95,25 +95,25 @@ document.addEventListener("DOMContentLoaded", () => {
             list.innerHTML = '<div style="color:#888;text-align:center;">No comments yet.</div>';
             return;
           }
-          list.innerHTML = comments.map((c, i) => `
+          list.innerHTML = comments.map((c) => `
             <div style="background:#fff3cd;border-radius:8px;padding:1em 1.5em;margin-bottom:1em;box-shadow:0 2px 8px rgba(0,0,0,0.04);position:relative;">
               <b style=\"color:#b8860b;\">${c.name}</b><br>
               <span style=\"color:#333;\">${c.comment}</span><br>
               <small style=\"color:#888;\">${new Date(c.created_at).toLocaleString()}</small>
-              <button class='delete-comment-btn' data-index='${i}' style='position:absolute;top:1em;right:1em;background:#dc3545;color:#fff;border:none;padding:0.3em 0.8em;border-radius:5px;cursor:pointer;'>Delete</button>
+              <button class='delete-comment-btn' data-id='${c.id}' style='position:absolute;top:1em;right:1em;background:#dc3545;color:#fff;border:none;padding:0.3em 0.8em;border-radius:5px;cursor:pointer;'>Delete</button>
             </div>
           `).join("");
           // Add delete handlers
           document.querySelectorAll('.delete-comment-btn').forEach(btn => {
             btn.addEventListener('click', function() {
-              const idx = this.getAttribute('data-index');
-              deleteComment(idx);
+              const id = this.getAttribute('data-id');
+              deleteComment(id);
             });
           });
         });
     }
     function deleteComment(idx) {
-      fetch(COMMENT_API + `/${idx}`, { method: 'DELETE' })
+      fetch(COMMENT_API + `/${id}`, { method: 'DELETE' })
         .then(res => res.json())
         .then(() => loadAdminComments());
     }
@@ -148,9 +148,11 @@ function initializeNavigation() {
   const navMenu = document.getElementById("nav-menu")
   const navLinks = document.querySelectorAll(".nav-link")
 
-  // Navbar scroll effect
+  // Navbar scroll effect with smooth transition
   window.addEventListener("scroll", () => {
-    if (window.scrollY > 50) {
+    const currentScroll = window.scrollY;
+    
+    if (currentScroll > 50) {
       navbar.classList.add("scrolled")
     } else {
       navbar.classList.remove("scrolled")
@@ -311,6 +313,7 @@ function initializeSmoothScroll() {
         } else {
           scrollToY = targetSection.getBoundingClientRect().top + window.scrollY - navbarHeight;
         }
+        // Smooth scroll with native behavior
         window.scrollTo({
           top: scrollToY,
           behavior: "smooth",
@@ -541,7 +544,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   focusableElements.forEach((element) => {
     element.addEventListener("focus", function () {
-      this.style.outline = "2px solid #007BFF"
+      this.style.outline = "2px solid #b8860b"
       this.style.outlineOffset = "2px"
     })
 
@@ -551,3 +554,34 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   })
 })
+
+// Add smooth hover effect to all links
+document.addEventListener("DOMContentLoaded", () => {
+  const allLinks = document.querySelectorAll('a:not(.nav-link)');
+  allLinks.forEach(link => {
+    link.addEventListener('mouseenter', function(e) {
+      this.style.transition = 'all 0.3s ease';
+    });
+  });
+});
+
+// Add parallax effect to hero section
+window.addEventListener('scroll', () => {
+  const scrolled = window.pageYOffset;
+  const hero = document.querySelector('.hero');
+  if (hero) {
+    const heroContent = hero.querySelector('.hero-container');
+    if (heroContent && scrolled < window.innerHeight) {
+      heroContent.style.transform = `translateY(${scrolled * 0.5}px)`;
+      heroContent.style.opacity = 1 - (scrolled / window.innerHeight);
+    }
+  }
+});
+
+// Add animation to skill cards on hover
+document.addEventListener("DOMContentLoaded", () => {
+  const skillCards = document.querySelectorAll('.skill-card');
+  skillCards.forEach((card, index) => {
+    card.style.animationDelay = `${index * 0.1}s`;
+  });
+});
