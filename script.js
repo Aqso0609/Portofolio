@@ -74,48 +74,16 @@ document.addEventListener("DOMContentLoaded", () => {
       if (navbar) navbar.style.display = "none";
       if (footer) footer.style.display = "none";
       if (adminPage) adminPage.style.display = "block";
-      loadAdminComments();
     }
     // Logout admin
     if (adminPage) {
       const logoutBtn = document.getElementById("logout-admin");
-      logoutBtn.addEventListener("click", function() {
-        localStorage.removeItem("loginRole");
-        location.reload();
-      });
-    }
-    // Load & manage comments in admin
-    function loadAdminComments() {
-      fetch(COMMENT_API)
-        .then(res => res.json())
-        .then(comments => {
-          const list = document.getElementById("admin-comments-list");
-          if (!list) return;
-          if (!comments.length) {
-            list.innerHTML = '<div style="color:#888;text-align:center;">No comments yet.</div>';
-            return;
-          }
-          list.innerHTML = comments.map((c) => `
-            <div style="background:#fff3cd;border-radius:8px;padding:1em 1.5em;margin-bottom:1em;box-shadow:0 2px 8px rgba(0,0,0,0.04);position:relative;">
-              <b style=\"color:#b8860b;\">${c.name}</b><br>
-              <span style=\"color:#333;\">${c.comment}</span><br>
-              <small style=\"color:#888;\">${new Date(c.created_at).toLocaleString()}</small>
-              <button class='delete-comment-btn' data-id='${c.id}' style='position:absolute;top:1em;right:1em;background:#dc3545;color:#fff;border:none;padding:0.3em 0.8em;border-radius:5px;cursor:pointer;'>Delete</button>
-            </div>
-          `).join("");
-          // Add delete handlers
-          document.querySelectorAll('.delete-comment-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-              const id = this.getAttribute('data-id');
-              deleteComment(id);
-            });
-          });
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", function() {
+          localStorage.removeItem("loginRole");
+          location.reload();
         });
-    }
-    function deleteComment(idx) {
-      fetch(COMMENT_API + `/${id}`, { method: 'DELETE' })
-        .then(res => res.json())
-        .then(() => loadAdminComments());
+      }
     }
   }
   // Initialize all functionality (setelah login)
@@ -123,7 +91,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeNavigation();
   initializeScrollAnimations();
   initializePortfolioFilter();
-  initializeContactForm();
   initializeSmoothScroll();
 });
 
@@ -195,17 +162,20 @@ function initializeNavigation() {
   })
 }
 
-// Scroll Animations
+// Scroll Animations - Enhanced
 function initializeScrollAnimations() {
   const observerOptions = {
-    threshold: 0.1,
-    rootMargin: "0px 0px -50px 0px",
+    threshold: 0.15,
+    rootMargin: "0px 0px -100px 0px",
   }
 
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
+    entries.forEach((entry, index) => {
       if (entry.isIntersecting) {
-        entry.target.classList.add("visible")
+        // Add stagger delay for multiple elements
+        setTimeout(() => {
+          entry.target.classList.add("visible")
+        }, index * 100)
       }
     })
   }, observerOptions)
@@ -214,6 +184,50 @@ function initializeScrollAnimations() {
   const fadeElements = document.querySelectorAll(".fade-in")
   fadeElements.forEach((element) => {
     observer.observe(element)
+  })
+
+  // Portfolio items animation
+  const portfolioObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, index) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.style.opacity = "1"
+          entry.target.style.transform = "translateY(0)"
+        }, index * 150)
+      }
+    })
+  }, {
+    threshold: 0.1,
+    rootMargin: "0px 0px -50px 0px"
+  })
+
+  const portfolioItems = document.querySelectorAll(".portfolio-item")
+  portfolioItems.forEach((item) => {
+    item.style.opacity = "0"
+    item.style.transform = "translateY(50px)"
+    item.style.transition = "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)"
+    portfolioObserver.observe(item)
+  })
+
+  // Skills animation
+  const skillCards = document.querySelectorAll(".skill-card")
+  skillCards.forEach((card, index) => {
+    card.style.opacity = "0"
+    card.style.transform = "scale(0.8) translateY(30px)"
+    card.style.transition = "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)"
+    
+    const skillObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.style.opacity = "1"
+            entry.target.style.transform = "scale(1) translateY(0)"
+          }, index * 100)
+        }
+      })
+    }, { threshold: 0.2 })
+    
+    skillObserver.observe(card)
   })
 }
 
@@ -252,46 +266,6 @@ function initializePortfolioFilter() {
   })
 }
 
-// Contact Form
-function initializeContactForm() {
-  const contactForm = document.getElementById("contact-form")
-
-  contactForm.addEventListener("submit", function (e) {
-    e.preventDefault()
-
-    // Get form data
-    const formData = new FormData(this)
-    const name = formData.get("name")
-    const email = formData.get("email")
-    const subject = formData.get("subject")
-    const message = formData.get("message")
-
-    // Basic validation
-    if (!name || !email || !subject || !message) {
-      showNotification("Please fill in all fields.", "error")
-      return
-    }
-
-    if (!isValidEmail(email)) {
-      showNotification("Please enter a valid email address.", "error")
-      return
-    }
-
-    // Simulate form submission
-    const submitButton = this.querySelector(".submit-button")
-    const originalText = submitButton.textContent
-
-    submitButton.textContent = "Sending..."
-    submitButton.disabled = true
-
-    setTimeout(() => {
-      showNotification("Thank you! Your message has been sent successfully.", "success")
-      contactForm.reset()
-      submitButton.textContent = originalText
-      submitButton.disabled = false
-    }, 2000)
-  })
-}
 
 // Smooth Scroll
 function initializeSmoothScroll() {
@@ -366,129 +340,25 @@ function showNotification(message, type) {
   }, 5000)
 }
 
-// === COMMENT SYSTEM (NEON) ===
-const COMMENT_API = 'http://localhost:3001/api/comments';
-
-// Show/hide comment sections
-function showCommentSection(section) {
-  document.getElementById('comment').style.display = section === 'form' ? '' : 'none';
-  document.getElementById('show-comments').style.display = section === 'show' ? '' : 'none';
-}
-
-// Load comments for both sections
-async function loadComments(targetId = 'comments-list') {
-  try {
-    const res = await fetch(COMMENT_API);
-    const comments = await res.json();
-    const list = document.getElementById(targetId);
-    if (!list) return Promise.resolve();
-    if (comments.length === 0) {
-      list.innerHTML = '<div style="text-align:center;color:#888;">Belum ada komentar.</div>';
-      return Promise.resolve();
+// === SMOOTH SCROLL ENHANCEMENT ===
+// Add smooth scroll behavior with proper offset for fixed navbar
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const targetId = this.getAttribute('href');
+    if (targetId === '#') return;
+    
+    const targetElement = document.querySelector(targetId);
+    if (targetElement) {
+      const navbarHeight = document.querySelector('.navbar').offsetHeight;
+      const targetPosition = targetElement.offsetTop - navbarHeight - 20;
+      
+      window.scrollTo({
+        top: targetPosition,
+        behavior: 'smooth'
+      });
     }
-    list.innerHTML = comments.map(c => `
-      <div style=\"background:#fff3cd;border-radius:8px;padding:1em 1.5em;margin-bottom:1em;box-shadow:0 2px 8px rgba(0,0,0,0.04);\">
-        <b style=\"color:#b8860b;\">${c.name}</b><br>
-        <span style=\"color:#333;\">${c.comment}</span><br>
-        <small style=\"color:#888;\">${new Date(c.created_at).toLocaleString()}</small>
-      </div>
-    `).join('');
-  } catch (err) {
-    const list = document.getElementById(targetId);
-    if (list) list.innerHTML = '<div style="color:red;text-align:center;">Gagal memuat komentar.</div>';
-  }
-  return Promise.resolve();
-}
-
-// Add navigation button for show comment
-document.addEventListener('DOMContentLoaded', () => {
-  // Add toggle show/hide comments button
-  if (!document.getElementById('toggle-comment-btn')) {
-    const btn = document.createElement('button');
-    btn.id = 'toggle-comment-btn';
-    btn.textContent = 'Show All Comments';
-    btn.className = 'submit-button';
-    btn.style.margin = '1rem auto 0 auto';
-    btn.style.display = 'block';
-    const commentSection = document.getElementById('comment');
-    commentSection.appendChild(btn);
-    let commentsVisible = false;
-    btn.addEventListener('click', () => {
-      commentsVisible = !commentsVisible;
-      if (commentsVisible) {
-        showCommentSection('show');
-        loadComments('all-comments-list').then(() => {
-          // Scroll ke bawah tepat ke section komentar
-          const showSection = document.getElementById('show-comments');
-          if (showSection) {
-            window.scrollTo({ top: showSection.offsetTop - 40, behavior: 'smooth' });
-          }
-        });
-        btn.textContent = 'Hide Comments';
-      } else {
-        showCommentSection('form');
-        btn.textContent = 'Show All Comments';
-        // Scroll ke bawah ke form komentar
-        setTimeout(() => {
-          const commentSection = document.getElementById('comment');
-          if (commentSection) {
-            window.scrollTo({ top: commentSection.offsetTop - 40, behavior: 'smooth' });
-          }
-        }, 100);
-      }
-    });
-  }
-  // Add back button to show-comments section
-  if (!document.getElementById('back-to-form-btn')) {
-    const backBtn = document.createElement('button');
-    backBtn.id = 'back-to-form-btn';
-    backBtn.textContent = 'Back to Comment Form';
-    backBtn.className = 'submit-button';
-    backBtn.style.margin = '1rem auto 0 auto';
-    backBtn.style.display = 'block';
-    const showSection = document.getElementById('show-comments');
-    showSection.appendChild(backBtn);
-    backBtn.addEventListener('click', () => {
-      showCommentSection('form');
-      window.scrollTo({top: document.getElementById('comment').offsetTop - 70, behavior: 'smooth'});
-    });
-  }
-  // Initial load
-  loadComments();
-  showCommentSection('form');
-  // Comment form handler
-  const commentForm = document.getElementById('comment-form');
-  if (commentForm) {
-    commentForm.addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const name = document.getElementById('comment-name').value.trim();
-      const comment = document.getElementById('comment-message').value.trim();
-      if (!name || !comment) {
-        showNotification('Nama dan komentar wajib diisi.', 'error');
-        return;
-      }
-      const submitBtn = this.querySelector('.submit-button');
-      const originalText = submitBtn.textContent;
-      submitBtn.textContent = 'Sending...';
-      submitBtn.disabled = true;
-      try {
-        const res = await fetch(COMMENT_API, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, comment })
-        });
-        if (!res.ok) throw new Error('Gagal mengirim komentar');
-        showNotification('Komentar berhasil dikirim!', 'success');
-        this.reset();
-        loadComments();
-      } catch (err) {
-        showNotification('Komentar gagal dikirim. Coba lagi.', 'error');
-      } finally {
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-      }
-    });
-  }
+  });
 });
 
 // Parallax Effect for Hero Section (Optional)
